@@ -2,12 +2,16 @@
 import { defineConfig } from '@playwright/test'
 import 'dotenv/config'
 import { devices } from '@playwright/test';
+/// <reference types="node" />
+import process from "node:process";
+
+
 
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
- */
+
 // import dotenv from 'dotenv';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });

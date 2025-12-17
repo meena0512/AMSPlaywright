@@ -9,10 +9,10 @@
   dependencies:
     playwright "1.57.0"
 
-"@types/node@^25.0.1":
-  version "25.0.1"
-  resolved "https://registry.npmjs.org/@types/node/-/node-25.0.1.tgz"
-  integrity sha512-czWPzKIAXucn9PtsttxmumiQ9N0ok9FrBwgRWrwmVLlp86BrMExzvXRLFYRJ+Ex3g6yqj+KuaxfX1JTgV2lpfg==
+"@types/node@^25.0.3":
+  version "25.0.3"
+  resolved "https://registry.npmjs.org/@types/node/-/node-25.0.3.tgz"
+  integrity sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==
   dependencies:
     undici-types "~7.16.0"
 
