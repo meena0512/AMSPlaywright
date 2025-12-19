@@ -24,9 +24,10 @@ export class AmsLoginPage {
 	readonly userSettings: string;
 	readonly signOut: string;
 
+	
 	constructor(page: Page, selectors: AmsSelectors = {}) {
 		this.page = page;
-
+console.log('LMSDashBoard:', process.env.LMSDashBoard);
 		// Login selectors
 		this.username = selectors.username ?? 'xpath=//input[@id="txtUserName"]';
 		this.password = selectors.password ?? 'xpath=//input[@id="txtPassword"]';

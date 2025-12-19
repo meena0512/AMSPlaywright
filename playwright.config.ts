@@ -1,9 +1,12 @@
 // playwright.config.ts
 import { defineConfig } from '@playwright/test'
-import 'dotenv/config'
+import 'dotenv/config';
 import { devices } from '@playwright/test';
 /// <reference types="node" />
 import process from "node:process";
+
+
+
 
 
 
