@@ -5,7 +5,8 @@ import { DatabaseUtility } from '../utils/database-utility.ts';
 import { HangfireDashboard } from '../src/pages/hangfire-utility.ts';
 import { LoginPage } from '../src/pages/login-page.ts';
 import path from 'path';
-
+import { FileDownloadUtility } from '../src/pages/file-download-utility';
+import { csvFileUtility } from '../utils/csv-file-utility.ts';
 /**
  * Test: TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS
  * Converted from C# Selenium test
@@ -76,16 +77,16 @@ test.describe('AMS Smoke Tests', () => {
       await HangfireDashboard.triggerCheckSchedulesJob(page);
       console.log('✓ Source schedules initialized and jobs triggered');
       
-      // Step 4: Process AMS Inbound Files 
-      console.log('Step 4: Process AMS Inbound Files with Carfax, Cleanlist, Locator');
-      const { FileDownloadUtility } = await import('../src/pages/file-download-utility.ts');
+      // Step 4: Process AMS Outbound Files 
+      console.log('Step 4: Process AMS Outbound Files with Carfax, Cleanlist, Locator');
+     // const { FileDownloadUtility } = await FileDownloadUtility.('../src/pages/file-download-utility.ts');
       await FileDownloadUtility.downloadLatestFile(page, 'Carfax', 'Outbound');
       await FileDownloadUtility.downloadLatestFile(page, 'CleanList', 'Outbound');
       await FileDownloadUtility.downloadLatestFile(page, 'Locator', 'Outbound');
       console.log(`✓ Downloaded Outbound files for Carfax, CleanList, Locator`);
       
       // Create and upload Carfax Inbound file
-      const { csvFileUtility } = await import('../utils/csv-file-utility.ts');
+      //const { csvFileUtility } = await import('../utils/csv-file-utility.ts');
       await csvFileUtility.createAndUploadCarfaxInboundFile(page, testData.testScenario);
       console.log(`✓ Created and uploaded Carfax Inbound file`);
       

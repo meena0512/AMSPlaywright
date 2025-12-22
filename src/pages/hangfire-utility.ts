@@ -197,9 +197,15 @@ export class HangfireDashboard {
   static async checkFailedJobs(page: Page): Promise<void> {
     try {
       const frame = await this.getHangfireFrame(page);
-      
+    //  console.log('framevalue',frame);
+       if (frame) {
+        // Click on Jobs tab
+        await frame.locator('//a[@href="/hangfiredashboard/hangfire/jobs/enqueued"]').click();
+        await page.waitForTimeout(1000);
+       }
       if (frame) {
         // Click on Scheduled Jobs multiple times
+      
         for (let i = 0; i < 3; i++) {
           await frame.locator('//a[@href="/hangfiredashboard/hangfire/jobs/scheduled"]').click();
           await page.waitForTimeout(500);
