@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { TestDataManager } from '../test-data/test-data-manager.ts';
-import type { ParsedTestData } from '../test-data/test-data.interface.ts';
-import { DatabaseUtility } from '../utils/database-utility.ts';
-import { HangfireDashboard } from '../src/pages/hangfire-utility.ts';
-import { LoginPage } from '../src/pages/login-page.ts';
+import { TestDataManager } from '../test-data/test-data-manager';
+import type { ParsedTestData } from '../test-data/test-data.interface';
+import { DatabaseUtility } from '../utils/database-utility';
+import { HangfireDashboard } from '../src/pages/hangfire-utility';
+import { LoginPage } from '../src/pages/login-page';
 import path from 'path';
 import { FileDownloadUtility } from '../src/pages/file-download-utility';
-import { csvFileUtility } from '../utils/csv-file-utility.ts';
+import { csvFileUtility } from '../utils/csv-file-utility';
 //test.setTimeout(120_000);
 /**
  * Test: TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS
@@ -20,7 +20,7 @@ import { csvFileUtility } from '../utils/csv-file-utility.ts';
 
 test.describe('AMS Smoke Tests', () => {
   
-  test.only('TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS', async ({ page }) => {
+  test('TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS', async ({ page }) => {
     // Initialize test data from Excel file
     const testCaseID = 'TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS';
     const testDataPath = process.env.TEST_DATA_PATH || path.join(process.cwd(), 'test-data', 'TestData.xlsx');
@@ -88,15 +88,16 @@ test.describe('AMS Smoke Tests', () => {
       
       // Create and upload Carfax Inbound file
       //const { csvFileUtility } = await import('../utils/csv-file-utility.ts');
-      await csvFileUtility.createAndUploadCarfaxInboundFile(page, testData.testScenario);
+      csvFileUtility.VinRepo = [...DatabaseUtility.vinRepo];
+      await csvFileUtility.createAndUploadCarfaxInboundFile(page, 'MVR');
       console.log(`✓ Created and uploaded Carfax Inbound file`);
       
       // Create and upload CleanList Inbound file
-      await csvFileUtility.createAndUploadCarfaxInboundFile(page, 'NO_NCOA_PCOA');
+      await csvFileUtility.createAndUploadCleanlistInboundFile(page, 'NO_NCOA_PCOA');
       console.log(`✓ Created and uploaded CleanList Inbound file`);
       
       // Create and upload Locator Inbound file
-      await csvFileUtility.createAndUploadCarfaxInboundFile(page, 'Ebay');
+      await csvFileUtility.createAndUploadLocatorInboundFile(page, 'Ebay');
       console.log(`✓ Created and uploaded Locator Inbound file`);
       
       // Step 4a: Update source schedulers to process inbound files
@@ -229,7 +230,7 @@ test.describe('AMS Smoke Tests', () => {
       console.log(`✓ Downloaded Outbound files for Carfax, CleanList, Locator`);
       
     // Step 2: Create and upload Carfax Inbound file
-    await csvFileUtility.createAndUploadCarfaxInboundFile(page, testData.testScenario);
+    await csvFileUtility.createAndUploadCarfaxInboundFile(page, 'MVR');
     console.log(`✓ Created and uploaded Carfax Inbound file`);
     
     // Step 3: Create and upload CleanList Inbound file
