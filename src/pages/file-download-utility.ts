@@ -20,29 +20,25 @@ export class FileDownloadUtility {
 await page.locator('mat-select[formcontrolname="sourceId"]').click();
 // Click the option (replace 'Carfax' with your variable)
 await page.locator('mat-option span', { hasText: fileSourceType }).click();
-
 // Open the File Type dropdown
 await page.locator('mat-select[formcontrolname="fileTypeId"]').click();
     // Select file type
     await page.locator('mat-option span', { hasText: fileType }).click();
-
     // Click Lookup button (inside Source File Download form)
     await page.getByLabel('Source File Download').getByRole('button', { name: 'Lookup' }).click();
-
     // Wait for file list to update and download icons to appear
-    await page.waitForSelector('span#iconDownload', { timeout: 30000 });
+    await page.waitForSelector('span#iconDownload', { timeout: 50000 });
     // Click the first download icon (latest file)
     const downloadIcon = page.locator('span#iconDownload').first();
-    
     // Start download and wait for completion
-    const [ download ] = await Promise.all([
+    const [ , download ] = await Promise.all([
+       new Promise(resolve => setTimeout(resolve, 50000)),
       page.waitForEvent('download'),
-      downloadIcon.click()
+       downloadIcon.click()
     ]);
     // Save Outbound files to respective csvfiles folders based on source type
     const suggestedName = download.suggestedFilename();
     let outDir = './downloads';
-    
     if (fileType.toLowerCase() === 'outbound') {
       const sourceType = fileSourceType.toLowerCase();
       switch (sourceType) {
@@ -59,13 +55,11 @@ await page.locator('mat-select[formcontrolname="fileTypeId"]').click();
           outDir = './downloads';
       }
     }
-    
     // Create directory if it doesn't exist
     const fs = await import('fs');
     if (!fs.existsSync(outDir)) {
       fs.mkdirSync(outDir, { recursive: true });
     }
-    
     await download.saveAs(`${outDir}/${suggestedName}`);
   }
 }

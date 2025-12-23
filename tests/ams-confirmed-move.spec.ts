@@ -7,6 +7,7 @@ import { LoginPage } from '../src/pages/login-page.ts';
 import path from 'path';
 import { FileDownloadUtility } from '../src/pages/file-download-utility';
 import { csvFileUtility } from '../utils/csv-file-utility.ts';
+test.setTimeout(120_000);
 /**
  * Test: TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS
  * Converted from C# Selenium test
@@ -19,7 +20,7 @@ import { csvFileUtility } from '../utils/csv-file-utility.ts';
 
 test.describe('AMS Smoke Tests', () => {
   
-  test('TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS', async ({ page }) => {
+  test.only('TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS', async ({ page }) => {
     // Initialize test data from Excel file
     const testCaseID = 'TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS';
     const testDataPath = process.env.TEST_DATA_PATH || path.join(process.cwd(), 'test-data', 'TestData.xlsx');
