@@ -7,7 +7,7 @@ import { LoginPage } from '../src/pages/login-page.ts';
 import path from 'path';
 import { FileDownloadUtility } from '../src/pages/file-download-utility';
 import { csvFileUtility } from '../utils/csv-file-utility.ts';
-test.setTimeout(120_000);
+//test.setTimeout(120_000);
 /**
  * Test: TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS
  * Converted from C# Selenium test
@@ -92,11 +92,11 @@ test.describe('AMS Smoke Tests', () => {
       console.log(`✓ Created and uploaded Carfax Inbound file`);
       
       // Create and upload CleanList Inbound file
-      await csvFileUtility.createAndUploadCleanlistInboundFile(page, 'NO_NCOA_PCOA');
+      await csvFileUtility.createAndUploadCarfaxInboundFile(page, 'NO_NCOA_PCOA');
       console.log(`✓ Created and uploaded CleanList Inbound file`);
       
       // Create and upload Locator Inbound file
-      await csvFileUtility.createAndUploadLocatorInboundFile(page, 'Ebay');
+      await csvFileUtility.createAndUploadCarfaxInboundFile(page, 'Ebay');
       console.log(`✓ Created and uploaded Locator Inbound file`);
       
       // Step 4a: Update source schedulers to process inbound files
@@ -233,11 +233,11 @@ test.describe('AMS Smoke Tests', () => {
     console.log(`✓ Created and uploaded Carfax Inbound file`);
     
     // Step 3: Create and upload CleanList Inbound file
-    await csvFileUtility.createAndUploadCleanlistInboundFile(page, 'NO_NCOA_PCOA');
+    await csvFileUtility.createAndUploadCarfaxInboundFile(page, 'NO_NCOA_PCOA');
     console.log(`✓ Created and uploaded CleanList Inbound file`);
     
     // Step 4: Create and upload Locator Inbound file
-    await csvFileUtility.createAndUploadLocatorInboundFile(page, 'Ebay');
+    await csvFileUtility.createAndUploadCarfaxInboundFile(page, 'Ebay');
     console.log(`✓ Created and uploaded Locator Inbound file`);
     
     // Step 4a: Update source schedulers to process inbound files
