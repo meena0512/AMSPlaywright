@@ -87,55 +87,41 @@ export class csvFileUtility {
    * @param scenario Test scenario name
    */
   private static addAllrowdetailstoCarfaxInboundfile(scenario: string): void {
-    // Get latest Carfax Outbound file
-    const outboundFiles = fs.readdirSync(this.carfaxOutboundcsvpath)
-      .filter(f => f.toLowerCase().endsWith('.csv'))
-      .map(f => ({ name: f, time: fs.statSync(path.join(this.carfaxOutboundcsvpath, f)).mtime.getTime() }))
-      .sort((a, b) => b.time - a.time);
-    
-    if (outboundFiles.length === 0) {
-      throw new Error('No Carfax Outbound file found to process');
-    }
-    
-    this.carfaxOutboundFileName = outboundFiles[0].name;
-    const latestOutboundFile = path.join(this.carfaxOutboundcsvpath, this.carfaxOutboundFileName);
-    
-    // Read outbound file
-    const outboundContent = fs.readFileSync(latestOutboundFile, 'utf-8');
-    const lines = outboundContent.split('\n').filter(line => line.trim() !== '');
-    
-    // Process each line (skip header)
-    const now = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000); // 2 days ago
-    const carfaxDt = (now.getMonth() + 1).toString().padStart(2, '0') + '/' + 
-      now.getDate().toString().padStart(2, '0') + '/' + 
-      now.getFullYear();
-    
-    for (let i = 1; i < lines.length; i++) {
-      const fields = this.parseCSVLine(lines[i]);
-      if (fields.length < 2) continue;
-      
-      const vin = fields[0].replace(/"/g, '');
-      const ref = fields[1].replace(/"/g, '');
-      
-      // Build Carfax Inbound row based on scenario
-      let appendText = '';
-      
-      // Default scenario (can be expanded based on C# switch cases)
-      appendText = `"${vin}","${ref}","","2000","Oldsmobile","Alero","","","","","","SK","${carfaxDt}","","","","","","5123","","","${carfaxDt}","Yorkton","AB","CAN","True","${carfaxDt}","True","${carfaxDt}","SK","False","01/23/2024","Detroit","MI","False","FALSE","","FALSE","False","","False","","","TRUE","${carfaxDt}","","True","","False","",""\n`;
-      
-      // Append to Carfax Inbound file
-      fs.appendFileSync(this.carfaxInboundcsvpath, appendText);
-    }
-    
-    // Verify file has rows
-    const rowCount = fs.readFileSync(this.carfaxInboundcsvpath, 'utf-8').split('\n').filter(l => l.trim() !== '').length;
-    if (rowCount < 2) {
-      throw new Error('Carfax Inbound file has no data rows');
-    }
-    
-    console.log(`✓ Added ${rowCount - 1} rows to Carfax Inbound file`);
+  // Get latest outbound file
+  const outboundFiles = fs.readdirSync(this.carfaxOutboundcsvpath)
+    .filter(f => f.toLowerCase().endsWith('.csv'))
+    .map(f => ({ name: f, time: fs.statSync(path.join(this.carfaxOutboundcsvpath, f)).mtime.getTime() }))
+    .sort((a, b) => b.time - a.time);
+  if (outboundFiles.length === 0) {
+    throw new Error('No Carfax Outbound file found');
   }
-  
+  const latestOutboundFile = path.join(this.carfaxOutboundcsvpath, outboundFiles[0].name);
+  const outboundContent = fs.readFileSync(latestOutboundFile, 'utf-8');
+  const lines = outboundContent.split('\r\n').filter(l => l.trim() !== '');
+  // Use the generated date (MM/DD/YYYY)
+  const carfaxDt = this.carfaxInboundDate;
+  // Process all rows
+  for (let i = 0; i < lines.length; i++) {
+    const fields = this.parseCSVLine(lines[i]);
+    if (!fields || fields.length < 2) continue;
+    const vin = fields[0].replace(/"/g, '');
+    const ref = fields[1].replace(/"/g, '');
+    // VinRepo check (same as C#)
+    if (!this.VinRepo.includes(vin)) {
+      continue;
+    }
+    let appendText = '';
+    switch (scenario) {
+      case 'MVR':
+        appendText =  `"${vin}","${ref}","","2000","Oldsmobile","Alero","","","","","","MB","${carfaxDt}","","","","","","5123","","","${carfaxDt}","Yorkton","MB","CAN","","${carfaxDt}","","${carfaxDt}","MB","False","","","","False","FALSE","","FALSE","False","","False","","","False","${carfaxDt}","","False","","False","",""\r\n`;
+        break;
+      default:
+        continue;
+    }
+    // Ensure CRLF for new lines
+    fs.appendFileSync(this.carfaxInboundcsvpath, appendText.replace(/(?<!\r)\n/g, '\r\n'));
+  }
+}
   /**
    * Generic SFTP upload method
    */

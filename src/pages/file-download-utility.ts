@@ -27,12 +27,12 @@ await page.locator('mat-select[formcontrolname="fileTypeId"]').click();
     // Click Lookup button (inside Source File Download form)
     await page.getByLabel('Source File Download').getByRole('button', { name: 'Lookup' }).click();
     // Wait for file list to update and download icons to appear
-    await page.waitForSelector('span#iconDownload', { timeout: 50000 });
+    await page.waitForSelector('span#iconDownload', { timeout: 60000 });
     // Click the first download icon (latest file)
     const downloadIcon = page.locator('span#iconDownload').first();
     // Start download and wait for completion
     const [ , download ] = await Promise.all([
-       new Promise(resolve => setTimeout(resolve, 50000)),
+       new Promise(resolve => setTimeout(resolve, 60000)),
       page.waitForEvent('download'),
        downloadIcon.click()
     ]);

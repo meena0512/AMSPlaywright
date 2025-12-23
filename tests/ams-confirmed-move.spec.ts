@@ -7,7 +7,7 @@ import { LoginPage } from '../src/pages/login-page.ts';
 import path from 'path';
 import { FileDownloadUtility } from '../src/pages/file-download-utility';
 import { csvFileUtility } from '../utils/csv-file-utility.ts';
-test.setTimeout(120_000);
+//test.setTimeout(60_000);
 /**
  * Test: TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS
  * Converted from C# Selenium test
