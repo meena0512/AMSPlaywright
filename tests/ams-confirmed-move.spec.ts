@@ -6,17 +6,14 @@ import { HangfireDashboard } from '../src/pages/hangfire-utility';
 import { LoginPage } from '../src/pages/login-page';
 import path from 'path';
 import { FileDownloadUtility } from '../src/pages/file-download-utility';
+import { AccountViewPage } from '../src/pages/account-view-page';
+import { LookupPage } from '../src/pages/lookup-page';
+import { WorkQueuePage } from '../src/pages/work-queue-page';
 import { csvFileUtility } from '../utils/csv-file-utility';
-//test.setTimeout(120_000);
-/**
- * Test: TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS
- * Converted from C# Selenium test
- * 
- * This test validates:
- * - Confirmed Move trigger with Carfax, Cleanlist, and Locator
- * - Business rules for Confirmed Moves and DNS
- * - Work Queue validations for MVR and Ebay
- */
+
+
+// Test: TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS
+// Checks Confirmed Move trigger, business rules, and work queue for Carfax, Cleanlist, Locator, MVR, and Ebay.
 
 test.describe('AMS Smoke Tests', () => {
   
@@ -113,8 +110,8 @@ test.describe('AMS Smoke Tests', () => {
       
       // Step 4c: Update report schedulers
       console.log('Step 4c: Update report schedulers');
-      await DatabaseUtility.updateSourceSchedule('ReportScheduler', -2, 2, 1); // DNS Report
-      await DatabaseUtility.updateSourceSchedule('ReportScheduler', -2, 1, 1); // Main Report
+      await DatabaseUtility.updateSourceSchedule('ReportScheduler', -2, 2, 1); 
+      await DatabaseUtility.updateSourceSchedule('ReportScheduler', -2, 1, 1); 
       
       // Step 4d: Trigger Hangfire job to check schedules for reports
       console.log('Step 4d: Trigger CheckSchedules job for reports');
@@ -141,49 +138,17 @@ test.describe('AMS Smoke Tests', () => {
       
       // Step 5: Validate Account View Business Rules - Confirmed Move
       console.log('Step 5: Validate AV Business Rules - Confirmed Move');
-      // TODO: Navigate to account view and validate
-      // Account Number: testData.accountNumber
-      // VIN: testData.vin
-      console.log(`  Account: ${testData.accountNumber}, VIN: ${testData.vin}`);
+        await LookupPage.lookupByVIN(page, csvFileUtility.VinRepo[0]);
+      // Step 2: Validate Account View for Confirmed Move (MVR)
+      await AccountViewPage.accountViewValidation(page, 'confirmed', 'MVR');
+       await AccountViewPage.accountViewValidation(page, 'dns', 'EBAY');
       
-      // Step 6: Validate Account View Business Rules - DNS
-      console.log('Step 6: Validate AV Business Rules - DNS');
-      // TODO: Validate DNS business rules
-      // Queue: DNS, Scenario: DNS_BusinessRules_Ebay
       
       // Step 7: Switch to Confirmed Moves Work Queue Tab
       console.log('Step 7: Switch to Confirmed Moves WQ Tab');
-      await page.locator('//span[contains(text(),"Work Queues")]').click();
-      await page.waitForLoadState('networkidle');
-      await page.locator('//span[contains(text(),"Confirmed Moves")]').click();
-      await page.waitForLoadState('networkidle');
-      
-      // Step 8: Search for Account Number in Work Queue
-      console.log(`Step 8: Search for Account Number: ${testData.accountNumber}`);
-      // TODO: Implement account number search
-      // await page.locator('[placeholder="Search"]').fill(testData.accountNumber);
-      // await page.locator('button:has-text("Search")').click();
-      
-      // Step 9: Validate Work Queue - MVR_TRUE
-      console.log('Step 9: WQ Validation - MVR_TRUE');
-      // TODO: Implement WQ validation
-      // Verify account appears in Confirmed Moves queue
-      // Verify VIN matches: testData.vin
-      
-      // Step 10: Switch to Daily Monitoring Work Queue Tab
-      console.log('Step 10: Switch to Daily Monitoring WQ Tab');
-      await page.locator('//span[contains(text(),"Daily Monitoring")]').click();
-      await page.waitForLoadState('networkidle');
-      
-      // Step 11: Search for Account Number in Daily Monitoring
-      console.log(`Step 11: WQ Account Number Search: ${testData.accountNumber}`);
-      // TODO: Implement account number search (same as step 8)
-      
-      // Step 12: Validate Work Queue - Ebay_TRUE
-      console.log('Step 12: WQ Validation - Ebay_TRUE');
-      // TODO: Implement WQ validation
-      // Verify account appears in Daily Monitoring queue
-      // Debtor Info: ${testData.debtorFN} ${testData.debtorLN_BusinessName}
+       await WorkQueuePage.validateAccountInWorkQueue(page,csvFileUtility.VinRepo[0], 'confirmed');
+       await WorkQueuePage.validateWQTriggers(page,'MVR');
+        await WorkQueuePage.validateWQTriggers(page,'Ebay');
       
       console.log('Test completed successfully');
       console.log(`Test Data Used: VIN=${testData.vin}, Account=${testData.accountNumber}`);
