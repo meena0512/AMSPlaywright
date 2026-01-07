@@ -177,8 +177,9 @@ export class HangfireDashboard {
       
       if (frame) {
         // Click on Jobs tab
-        await frame.locator('//a[@href="/hangfiredashboard/hangfire/jobs/enqueued"]').click();
-        await page.waitForTimeout(1000);
+       // await frame.locator('//a[@href="/hangfiredashboard/hangfire/jobs/enqueued"]').click();
+       await frame.locator('//ul[contains(@class,"navbar-nav")]//a[@href="/hangfiredashboard/hangfire/jobs/enqueued"]').click(); 
+       await page.waitForTimeout(10000);
         
         // Check processing job count
         const processingCountElement = await frame.locator('//a[@href="/hangfiredashboard/hangfire/jobs/processing"]/span/span');

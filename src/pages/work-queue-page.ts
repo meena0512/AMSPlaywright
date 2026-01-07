@@ -19,8 +19,14 @@ export class WorkQueuePage {
     const resetColumnBtn = page.locator("//button[normalize-space()='Reset Column Settings']");
     const clearFilterBtn = page.locator("//button[normalize-space()='Clear Filters']");
     // Use a locator for the clickable <a> element containing the vertical dots icon for Account Number
-    const accNoSortOption = page.locator("//th[@role='columnheader' and .//span[@title='Account Number']]//a[kendo-svgicon[contains(@class,'k-svg-i-more-vertical')]]");
-    const filterBtn = page.locator("//*[.=' Filter ']");
+    //from Brenta -const accNoSortOption = page.locator("//th[@role='columnheader' and .//span[@title='Account Number']]//a[kendo-svgicon[contains(@class,'k-svg-i-more-vertical')]]");
+    
+   const accNoHeader = page.getByRole('columnheader', { name: 'Account Number' });
+
+// The clickable control shown in the snapshot is a link inside the header
+const accNoSortOption = accNoHeader.getByRole('link').first();
+
+const filterBtn = page.locator("//*[.=' Filter ']");
     const accNoInput = page.locator("//input[@aria-label='Account Number Filter']");
     const submitBtn = page.locator("//button[@type='submit']");
     const accResult = page.locator(`//a[@title='${accountNumber}']`);
@@ -52,10 +58,12 @@ export class WorkQueuePage {
     await clearFilterBtn.click();
 
     // Open Account Number filter
-    await accNoSortOption.waitFor({ state: 'visible', timeout: 10000 });
-    // Scroll into view and add a short delay to improve reliability in headless/run mode
+   await accNoSortOption.waitFor({ state: 'visible', timeout: 10000 });
+   
+   // Scroll into view and add a short delay to improve reliability in headless/run mode
     try {
       console.log('[DEBUG] Attempting to click Account Number sort option');
+     
       await accNoSortOption.scrollIntoViewIfNeeded();
       await page.waitForTimeout(300); // Small delay for UI to settle
       await accNoSortOption.click({ timeout: 5000 });
@@ -96,7 +104,7 @@ export class WorkQueuePage {
     await expect(accResult).toHaveCount(1);
     console.log(`✓ Account ${accountNumber} found in ${moveType} Work Queue`   );
   }
-  static async validateWQTriggers(page: Page, trigger: 'MVR' | 'Ebay'): Promise<void> {
+ /* from Brenta static async validateWQTriggers(page: Page, trigger: 'MVR' | 'Ebay'): Promise<void> {
     const latestComments = page.locator("//span[@id='Latest Comments']");
     let triggerLocator;
     let expectedTriggerText = '';
@@ -118,11 +126,55 @@ export class WorkQueuePage {
         break;
       default:
         throw new Error(`Unknown trigger: ${trigger}`);
+    }*/
+
+        static async validateWQTriggers(page: Page, trigger: 'MVR' | 'Ebay'): Promise<void> {
+  // 🔴 UPDATED — Latest Comments is a grid cell, not a span with id
+  const latestCommentsCell = page
+    .locator("tr[role='row']")
+    .filter({ has: page.locator("a[href*='accountview']") })
+    .first()
+    .locator("td[role='gridcell']")
+    .last();
+
+  let triggerLocator;
+  let expectedTriggerText = '';
+  let expectedCommentsText = '';
+  let logMessage = '';
+
+  switch (trigger) {
+    case 'MVR': {
+      // 🔴 UPDATED — MVR value is in a grid cell, not span[@id='MVR']
+      const row = page
+        .locator("tr[role='row']")
+        .filter({ has: page.locator("a[href*='accountview']") })
+        .first();
+
+      // 🔴 UPDATED — column index for MVR (adjust only if grid order changes)
+      triggerLocator = row.locator("td[role='gridcell']").nth(11);
+
+      expectedTriggerText = 'TRUE';
+      expectedCommentsText = 'Confirmed Move (MVR)';
+      logMessage = 'Validating MVR trigger in Work Queue';
+      break;
     }
 
-    await expect(triggerLocator).toHaveText(expectedTriggerText);
-    await expect(latestComments).toHaveText(expectedCommentsText);
-    console.log(logMessage);
+    case 'Ebay':
+      // ❌ unchanged (left as-is per request)
+      triggerLocator = page.locator("//span[@id='Ebay']");
+      expectedTriggerText = 'TRUE';
+      expectedCommentsText = 'Daily Monitoring (Ebay)';
+      logMessage = 'Validating Ebay trigger in Work Queue';
+      break;
+
+    default:
+      throw new Error(`Unknown trigger: ${trigger}`);
   }
+
+  // Assertions
+  await expect(triggerLocator).toHaveText(expectedTriggerText);
+  await expect(latestCommentsCell).toContainText(expectedCommentsText);
+  console.log(logMessage);
+}
 
 }

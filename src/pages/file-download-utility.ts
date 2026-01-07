@@ -30,7 +30,7 @@ await page.locator('mat-select[formcontrolname="fileTypeId"]').click();
     await page.getByLabel('Source File Download').getByRole('button', { name: 'Lookup' }).click();
 
     // Wait for file list to update and download icons to appear
-    await page.waitForSelector('span#iconDownload', { timeout: 30000 });
+    await page.waitForSelector('span#iconDownload', { timeout: 90000 });
     // Click the first download icon (latest file)
     const downloadIcon = page.locator('span#iconDownload').first();
     

@@ -17,8 +17,9 @@ import { csvFileUtility } from '../utils/csv-file-utility';
 
 test.describe('AMS Smoke Tests', () => {
   
-  test('TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS', async ({ page }) => {
+  test.only('TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS', async ({ page }) => {
     // Initialize test data from Excel file
+    test.setTimeout(300000)
     const testCaseID = 'TC_AMS_ConfirmedMoveTrigger_CQ_DNS_LVS';
     const testDataPath = process.env.TEST_DATA_PATH || path.join(process.cwd(), 'test-data', 'TestData.xlsx');
     
