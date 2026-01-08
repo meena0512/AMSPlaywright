@@ -147,9 +147,9 @@ test.describe('AMS Smoke Tests', () => {
       
       // Step 7: Switch to Confirmed Moves Work Queue Tab
       console.log('Step 7: Switch to Confirmed Moves WQ Tab');
-       await WorkQueuePage.validateAccountInWorkQueue(page,csvFileUtility.VinRepo[0], 'confirmed');
-       await WorkQueuePage.validateWQTriggers(page,'MVR');
-        await WorkQueuePage.validateWQTriggers(page,'Ebay');
+      await WorkQueuePage.validateAccountInWorkQueue(page,csvFileUtility.VinRepo[0], 'confirmed');
+      await WorkQueuePage.validateWQTriggers(page,'MVR');
+      await WorkQueuePage.validateWQTriggers(page,'Ebay');
       
       console.log('Test completed successfully');
       console.log(`Test Data Used: VIN=${testData.vin}, Account=${testData.accountNumber}`);
